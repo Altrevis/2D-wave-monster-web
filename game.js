@@ -20,6 +20,7 @@ const monsters = [];
 const bulletSpeed = 8;
 const monsterSpeed = 1;
 const damagePerHit = 10;
+let lastBossAttackTime = 0;
 let gameOver = false;
 let killCount = 0;
 let boss = null;
@@ -235,9 +236,12 @@ function updateBoss() {
             Math.pow(boss.x - player.x, 2) + Math.pow(boss.y - player.y, 2)
         );
 
-        if (distanceToPlayer < attackRange) {
-            player.health -= damagePerHit * 2;  // Boss fait le double des dégâts
+        // Si le boss est dans la portée d'attaque et que 3 secondes se sont écoulées depuis le dernier coup
+        const currentTime = Date.now();
+        if (distanceToPlayer < attackRange && currentTime - lastBossAttackTime >= 3000) {
+            player.health -= 20;  // Boss inflige 20 de dégâts
             hitSound.play();
+            lastBossAttackTime = currentTime;  // Mettre à jour le dernier temps d'attaque
             checkGameOver();
         }
     }

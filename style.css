@@ -70,55 +70,6 @@ main p {
     box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
 }
 
-/* Game Over */
-.game-over-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #111;
-    color: #fff;
-    font-family: 'Press Start 2P', cursive;
-    text-shadow: 0 0 15px #ff4500, 0 0 30px #ff4500;
-}
-
-.game-over-title {
-    font-size: 4rem;
-    font-weight: bold;
-    color: #ff4d4d;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
-    animation: neonGlow 1.5s infinite alternate;
-}
-
-.game-over-score {
-    font-size: 2rem;
-    margin-bottom: 30px;
-    text-shadow: 0 0 15px #fff, 0 0 30px #fff;
-}
-
-.restart-btn {
-    padding: 15px 30px;
-    background-color: #4caf50;
-    color: #ffffff;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-    animation: pulse 1.5s infinite;
-}
-
-.restart-btn:hover {
-    background-color: #45a049;
-}
-
-.restart-btn:active {
-    background-color: #3e8e41;
-}
-
 /* Styles pour le menu déroulant du volume */
 .sound-settings {
     position: absolute;
