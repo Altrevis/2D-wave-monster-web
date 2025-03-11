@@ -40,7 +40,7 @@ const bullets = [];
 const monsters = [];
 const bulletSpeed = 8;
 const monsterSpeed = 1;
-const damagePerHit = 10;
+const damagePerHit = 20;
 let gameOver = false;
 let killCount = 0;
 let isBossAlive = false;
@@ -73,8 +73,6 @@ function checkGameOver() {
 }
 
 function updatePlayerPosition(player) {
-    if (player.dead) return; // Empêcher le mouvement si le joueur est mort
-
     player.x += player.dx;
     player.y += player.dy;
 
@@ -131,8 +129,34 @@ function updateMonsters() {
             checkGameOver();
         }
     });
-}
 
+    // Boss : même logique d'aggro que pour les monstres
+    if (isBossAlive && boss) {
+        const distanceToPlayer1 = Math.sqrt(Math.pow(boss.x - player1.x, 2) + Math.pow(boss.y - player1.y, 2));
+        const distanceToPlayer2 = Math.sqrt(Math.pow(boss.x - player2.x, 2) + Math.pow(boss.y - player2.y, 2));
+
+        let targetPlayer = player1;
+        if (distanceToPlayer2 < distanceToPlayer1) {
+            targetPlayer = player2;
+        }
+
+        // Déplacer le boss vers le joueur le plus proche
+        if (boss.x < targetPlayer.x) boss.x += monsterSpeed;
+        if (boss.x > targetPlayer.x) boss.x -= monsterSpeed;
+        if (boss.y < targetPlayer.y) boss.y += monsterSpeed;
+        if (boss.y > targetPlayer.y) boss.y -= monsterSpeed;
+
+        // Vérifier les collisions avec les joueurs
+        if (isCollision(player1, boss)) {
+            player1.health -= damagePerHit;
+            hitSound.play();
+        }
+        if (isCollision(player2, boss)) {
+            player2.health -= damagePerHit;
+            hitSound.play();
+        }
+    }
+}
 
 function drawBullets() {
     bullets.forEach((bullet, index) => {
