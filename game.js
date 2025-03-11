@@ -10,6 +10,8 @@ const player = {
     image: new Image(),
     dx: 0,
     dy: 0,
+    lastDx: 0,  // Dernière direction horizontale
+    lastDy: 0,  // Dernière direction verticale
     health: 100,
 };
 
@@ -58,6 +60,12 @@ function updatePlayerPosition() {
     if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
     if (player.y < 0) player.y = 0;
     if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+    // Mémoriser la dernière direction de déplacement
+    if (player.dx !== 0 || player.dy !== 0) {
+        player.lastDx = player.dx;
+        player.lastDy = player.dy;
+    }
 }
 
 function drawPlayer() {
@@ -154,8 +162,8 @@ function fireBullet() {
         y: player.y + player.height / 2,
         width: 10,
         height: 10,
-        dx: player.dx !== 0 ? Math.sign(player.dx) * bulletSpeed : 0,  // Direction horizontale du tir
-        dy: player.dy !== 0 ? Math.sign(player.dy) * bulletSpeed : 0   // Direction verticale du tir
+        dx: player.lastDx !== 0 ? Math.sign(player.lastDx) * bulletSpeed : 0,  // Utiliser la dernière direction horizontale
+        dy: player.lastDy !== 0 ? Math.sign(player.lastDy) * bulletSpeed : 0   // Utiliser la dernière direction verticale
     };
     bullets.push(bullet);
     bulletSound.play();
