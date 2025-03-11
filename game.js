@@ -15,6 +15,8 @@ const player = {
     health: 100,
 };
 
+let lastSalvoTime = 0;
+const salvoCooldown = 3000;
 const bullets = [];
 const monsters = [];
 const bulletSpeed = 8;
@@ -205,8 +207,8 @@ function keyDownHandler(e) {
     if (e.key === "q" || e.key === "ArrowLeft") player.dx = -player.speed;
     if (e.key === "z" || e.key === "ArrowUp") player.dy = -player.speed;
     if (e.key === "s" || e.key === "ArrowDown") player.dy = player.speed;
-    if (e.key === " ") {  // Tirer lorsque la touche espace est pressée
-        fireBullet();
+    if (e.key === " ") {  
+        fireSalvo();
     }
 }
 
@@ -218,6 +220,28 @@ function keyUpHandler(e) {
 function mouseClickHandler(e) {
     if (!gameOver) {
         fireBullet();
+    }
+}
+
+function fireSalvo() {
+    const currentTime = Date.now();
+    if (currentTime - lastSalvoTime < salvoCooldown) return; // Vérifie le cooldown
+
+    lastSalvoTime = currentTime;
+
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            const bullet = {
+                x: player.x + player.width / 2,
+                y: player.y + player.height / 2,
+                width: 10,
+                height: 10,
+                dx: player.lastDx !== 0 ? Math.sign(player.lastDx) * bulletSpeed : 0,
+                dy: player.lastDy !== 0 ? Math.sign(player.lastDy) * bulletSpeed : 0
+            };
+            bullets.push(bullet);
+            bulletSound.play();
+        }, i * 100); // Délai entre chaque tir (100 ms)
     }
 }
 
