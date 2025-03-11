@@ -15,7 +15,7 @@ const player1 = {
     health: 100,
     dead: false,
     lastSalvoTime: 0,
-    canShoot: true // Ajout d'un indicateur pour vérifier si le joueur peut tirer
+    canShoot: true
 };
 
 const player2 = {
@@ -32,7 +32,7 @@ const player2 = {
     health: 100,
     dead: false,
     lastSalvoTime: 0,
-    canShoot: true // Idem pour le joueur 2
+    canShoot: true
 };
 
 const salvoCooldown = 3000;
@@ -61,7 +61,6 @@ monsterImage.src = "assets/images/monster_image.png";
 const bossImage = new Image();
 bossImage.src = "assets/images/boss_image.png";
 
-// ➡️ Vérification du Game Over
 function checkGameOver() {
     if (player1.health <= 0 && player2.health <= 0) {
         gameOver = true;
@@ -96,7 +95,6 @@ function drawMonsters() {
         ctx.drawImage(monsterImage, monster.x, monster.y, monster.width, monster.height);
     });
 
-    // Si le boss existe et est vivant, dessine-le
     if (isBossAlive && boss) {
         ctx.drawImage(bossImage, boss.x, boss.y, boss.width, boss.height);
     }
@@ -104,23 +102,17 @@ function drawMonsters() {
 
 function updateMonsters() {
     monsters.forEach((monster, index) => {
-        // Calculer les distances entre le monstre et les deux joueurs
         const distanceToPlayer1 = Math.sqrt(Math.pow(monster.x - player1.x, 2) + Math.pow(monster.y - player1.y, 2));
         const distanceToPlayer2 = Math.sqrt(Math.pow(monster.x - player2.x, 2) + Math.pow(monster.y - player2.y, 2));
-
-        // Déterminer quel joueur est le plus proche
         let targetPlayer = player1;
         if (distanceToPlayer2 < distanceToPlayer1) {
             targetPlayer = player2;
         }
 
-        // Déplacer le monstre vers le joueur le plus proche
         if (monster.x < targetPlayer.x) monster.x += monsterSpeed;
         if (monster.x > targetPlayer.x) monster.x -= monsterSpeed;
         if (monster.y < targetPlayer.y) monster.y += monsterSpeed;
         if (monster.y > targetPlayer.y) monster.y -= monsterSpeed;
-
-        // Vérifier les collisions avec les joueurs
         if (isCollision(player1, monster) || isCollision(player2, monster)) {
             if (isCollision(player1, monster)) player1.health -= damagePerHit;
             if (isCollision(player2, monster)) player2.health -= damagePerHit;
@@ -130,7 +122,6 @@ function updateMonsters() {
         }
     });
 
-    // Boss : même logique d'aggro que pour les monstres
     if (isBossAlive && boss) {
         const distanceToPlayer1 = Math.sqrt(Math.pow(boss.x - player1.x, 2) + Math.pow(boss.y - player1.y, 2));
         const distanceToPlayer2 = Math.sqrt(Math.pow(boss.x - player2.x, 2) + Math.pow(boss.y - player2.y, 2));
@@ -140,13 +131,10 @@ function updateMonsters() {
             targetPlayer = player2;
         }
 
-        // Déplacer le boss vers le joueur le plus proche
         if (boss.x < targetPlayer.x) boss.x += monsterSpeed;
         if (boss.x > targetPlayer.x) boss.x -= monsterSpeed;
         if (boss.y < targetPlayer.y) boss.y += monsterSpeed;
         if (boss.y > targetPlayer.y) boss.y -= monsterSpeed;
-
-        // Vérifier les collisions avec les joueurs
         if (isCollision(player1, boss)) {
             player1.health -= damagePerHit;
             hitSound.play();
@@ -223,7 +211,6 @@ function fireBullet(player) {
     bulletSound.play();
 }
 
-// Fonction pour tirer une salve avec cooldown
 function fireSalvo(player) {
     const currentTime = Date.now();
     if (currentTime - player.lastSalvoTime < salvoCooldown || !player.canShoot) return;
@@ -247,7 +234,7 @@ function fireSalvo(player) {
     }
 
     setTimeout(() => {
-        player.canShoot = true;  // Permet de tirer à nouveau après la salve
+        player.canShoot = true;
     }, salvoCooldown);
 }
 
@@ -257,7 +244,6 @@ function spawnMonsters() {
             if (killCount >= 10 && !isBossAlive) {
                 spawnBoss();
             } else if (!isBossAlive) {
-                // Vérifie que les monstres sont bien ajoutés
                 const monster = {
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
@@ -267,11 +253,11 @@ function spawnMonsters() {
                 monsters.push(monster);
             }
         }
-    }, 1000); // Monstres spawn toutes les 1 seconde
+    }, 1000);
 }
 
 function spawnBoss() {
-    if (!isBossAlive) { // Vérifie que le boss n'est pas déjà spawné
+    if (!isBossAlive) {
         boss = {
             x: canvas.width / 2 - 50,
             y: canvas.height / 2 - 50,
@@ -296,11 +282,11 @@ function keyDownHandler(e) {
     if (e.key === "ArrowUp") player2.dy = -player2.speed;
     if (e.key === "ArrowDown") player2.dy = player2.speed;
 
-    if (e.key === "r") fireBullet(player2);  // Tir sans cooldown pour le joueur 2
-    if (e.key === "t") fireBullet(player1);  // Tir sans cooldown pour le joueur 1
+    if (e.key === "r") fireBullet(player2);
+    if (e.key === "t") fireBullet(player1);
 
-    if (e.key === "f") fireSalvo(player2); // Tir salve avec cooldown pour le joueur 2
-    if (e.key === "g") fireSalvo(player1); // Tir salve avec cooldown pour le joueur 1
+    if (e.key === "f") fireSalvo(player2);
+    if (e.key === "g") fireSalvo(player1);
 }
 
 function keyUpHandler(e) {
