@@ -64,15 +64,6 @@ main p {
     box-shadow: 0 3px 8px rgba(255, 69, 0, 0.4);
 }
 
-/* Footer */
-footer {
-    margin-top: 50px;
-    font-size: 14px;
-    color: #888;
-}
-
-/* ===== Styles existants ===== */
-
 /* Ajouté pour le game-over.html */
 .game-over-container {
     display: flex;
@@ -116,6 +107,58 @@ footer {
 
 .restart-btn:active {
     background-color: #3e8e41;
+}
+
+/* Styles pour le menu déroulant du volume */
+.sound-settings {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #333;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+
+.sound-settings label {
+    font-size: 1.1rem;
+    margin-right: 10px;
+}
+
+.sound-settings input[type="range"] {
+    width: 200px;
+    background-color: #555;
+    border-radius: 5px;
+    height: 8px;
+    appearance: none;
+    cursor: pointer;
+}
+
+.sound-settings input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: #ff4500;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -2.4%;
+}
+
+.sound-settings input[type="range"]::-webkit-slider-runnable-track {
+    background-color: #777;
+    height: 8px;
+    border-radius: 5px;
+}
+
+.sound-settings input[type="range"]:focus {
+    outline: none;
+}
+
+.sound-settings input[type="range"]:hover {
+    background-color: #666;
 }
 
 /* Responsive */

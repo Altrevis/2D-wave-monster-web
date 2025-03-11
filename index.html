@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Menu déroulant pour ajuster le volume -->
+    <div id="soundSettings" class="sound-settings">
+        <label for="volumeControl">Volume:</label>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+    </div>
+    <!-- Container start game -->
     <div class="container">
         <header>
             <h1>Bienvenue dans le Monde de l'Aventure</h1>
@@ -15,9 +21,6 @@
             <p>Êtes-vous prêt à embarquer dans une quête épique ?</p>
             <a href="game.html" class="start-btn">Start Play</a>
         </main>
-        <footer>
-            <p>&copy; 2025 - Jeu 2D. Tous droits réservés.</p>
-        </footer>
     </div>
 </body>
 </html>

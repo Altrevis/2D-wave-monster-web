@@ -216,7 +216,7 @@ function keyUpHandler(e) {
 
 function mouseClickHandler(e) {
     if (!gameOver) {
-        fireBullet(e.clientX, e.clientY);
+        fireBullet();
     }
 }
 
