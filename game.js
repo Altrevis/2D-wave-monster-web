@@ -220,11 +220,35 @@ function mouseClickHandler(e) {
     }
 }
 
+function updateBoss() {
+    if (isBossAlive && boss) {
+        const attackRange = 50;  // Distance d'attaque du boss
+
+        // Le boss se déplace vers le joueur
+        if (boss.x < player.x) boss.x += monsterSpeed * 2;
+        if (boss.x > player.x) boss.x -= monsterSpeed * 2;
+        if (boss.y < player.y) boss.y += monsterSpeed * 2;
+        if (boss.y > player.y) boss.y -= monsterSpeed * 2;
+
+        // Vérifier si le boss est dans la portée d'attaque
+        const distanceToPlayer = Math.sqrt(
+            Math.pow(boss.x - player.x, 2) + Math.pow(boss.y - player.y, 2)
+        );
+
+        if (distanceToPlayer < attackRange) {
+            player.health -= damagePerHit * 2;  // Boss fait le double des dégâts
+            hitSound.play();
+            checkGameOver();
+        }
+    }
+}
+
 function gameLoop() {
     if (!gameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         updatePlayerPosition();
         updateMonsters();
+        updateBoss(); // Appel de la mise à jour du boss
         drawPlayer();
         drawBullets();
         drawMonsters();

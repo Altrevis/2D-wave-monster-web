@@ -6,40 +6,45 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #1e1e1e;
+    font-family: 'Press Start 2P', cursive; /* Police rétro */
+    background-color: #0a0a0a;
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(circle, #111, #333);
 }
 
 /* Conteneur principal */
 .container {
     text-align: center;
+    animation: fadeIn 1s ease-in-out;
 }
 
 /* Bannière */
 header h1 {
-    font-size: 2.5rem;
-    color: #ff4500;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 10px rgba(255, 69, 0, 0.7);
+    font-size: 3rem;
+    color: #ff0;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 255, 0, 0.6), 0 0 30px rgba(255, 255, 0, 0.4);
+    animation: neonGlow 1.5s infinite alternate;
 }
 
 /* Texte principal */
 main p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-    color: #ccc;
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    color: #fff;
+    text-shadow: 0 0 10px #fff, 0 0 20px #ff4500;
 }
 
 /* Bouton Start */
 .start-btn {
     display: inline-block;
-    padding: 15px 40px;
-    font-size: 18px;
+    padding: 20px 50px;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #fff;
     background-color: #ff4500;
@@ -47,58 +52,63 @@ main p {
     border-radius: 8px;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.7);
     text-transform: uppercase;
     letter-spacing: 1.5px;
+    animation: pulse 1.5s infinite;
 }
 
 .start-btn:hover {
     background-color: #e03e00;
     border-color: #e03e00;
-    box-shadow: 0 6px 15px rgba(255, 69, 0, 0.7);
-    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(255, 69, 0, 0.9);
+    transform: translateY(-5px);
 }
 
 .start-btn:active {
     transform: translateY(0);
-    box-shadow: 0 3px 8px rgba(255, 69, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
 }
 
-/* Ajouté pour le game-over.html */
+/* Game Over */
 .game-over-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #1a1a1a;
+    background-color: #111;
     color: #fff;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 0 0 15px #ff4500, 0 0 30px #ff4500;
 }
 
 .game-over-title {
-    font-size: 3rem;
+    font-size: 4rem;
     font-weight: bold;
     color: #ff4d4d;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 8px rgba(255, 77, 77, 0.6);
+    text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
+    animation: neonGlow 1.5s infinite alternate;
 }
 
 .game-over-score {
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: 30px;
+    text-shadow: 0 0 15px #fff, 0 0 30px #fff;
 }
 
 .restart-btn {
-    padding: 12px 24px;
+    padding: 15px 30px;
     background-color: #4caf50;
     color: #ffffff;
-    font-size: 1rem;
+    font-size: 1.2rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    animation: pulse 1.5s infinite;
 }
 
 .restart-btn:hover {
@@ -114,17 +124,17 @@ main p {
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: #333;
+    background-color: #222;
     padding: 10px 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     color: #fff;
     display: flex;
     align-items: center;
 }
 
 .sound-settings label {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     margin-right: 10px;
 }
 
@@ -161,18 +171,51 @@ main p {
     background-color: #666;
 }
 
+/* Animations */
+@keyframes neonGlow {
+    0% {
+        text-shadow: 0 0 5px #ff4500, 0 0 10px #ff4500, 0 0 20px #ff4500, 0 0 30px #ff4500;
+    }
+    100% {
+        text-shadow: 0 0 10px #ff4500, 0 0 20px #ff4500, 0 0 30px #ff4500, 0 0 40px #ff4500;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .game-over-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
 
     .game-over-score {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
 
     .restart-btn {
-        font-size: 0.9rem;
+        font-size: 1rem;
         padding: 10px 20px;
+    }
+
+    .start-btn {
+        font-size: 1.2rem;
+        padding: 15px 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        background-size: cover;
     }
 }
