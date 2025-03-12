@@ -62,7 +62,9 @@ const bossImage = new Image();
 bossImage.src = "assets/images/boss_image.png";
 
 function checkGameOver() {
-    if (player1.health <= 0 && player2.health <= 0) {
+    console.log(`Player1 dead: ${player1.dead}, Player2 dead: ${player2.dead}`);
+    if (player1.dead && player2.dead && !gameOver) {
+        console.log("Game over triggered");
         gameOver = true;
         localStorage.setItem("finalScore", killCount);
         setTimeout(() => {
@@ -74,18 +76,31 @@ function checkGameOver() {
 function startBossDamageInterval() {
     setInterval(() => {
         if (isBossAlive) {
-            if (!player1.dead) {
+            if (!player1.dead && player1.health > 0) {
                 player1.health -= 20;
+                if (player1.health <= 0) {
+                    player1.dead = true;
+                }
             }
-            if (!player2.dead) {
+            if (!player2.dead && player2.health > 0) {
                 player2.health -= 20;
+                if (player2.health <= 0) {
+                    player2.dead = true;
+                }
             }
             checkGameOver();
         }
-    }, 5000); // 5000 ms = 5 secondes
+    }, 5000);
 }
 
 function updatePlayerPosition(player) {
+    if (player.health <= 0) {
+        player.health = 0;
+        player.dead = true;
+    }
+
+    if (player.dead) return;
+
     player.x += player.dx;
     player.y += player.dy;
 
@@ -101,7 +116,9 @@ function updatePlayerPosition(player) {
 }
 
 function drawPlayer(player) {
-    ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
+    if (player.health > 0) {
+        ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
+    }
 }
 
 function drawMonsters() {
@@ -116,55 +133,57 @@ function drawMonsters() {
 
 function updateMonsters() {
     monsters.forEach((monster, index) => {
-        const distanceToPlayer1 = Math.sqrt(Math.pow(monster.x - player1.x, 2) + Math.pow(monster.y - player1.y, 2));
-        const distanceToPlayer2 = Math.sqrt(Math.pow(monster.x - player2.x, 2) + Math.pow(monster.y - player2.y, 2));
-        let targetPlayer = player1;
-        if (distanceToPlayer2 < distanceToPlayer1) {
+        let targetPlayer = null;
+        const distanceToPlayer1 = !player1.dead ? Math.sqrt(Math.pow(monster.x - player1.x, 2) + Math.pow(monster.y - player1.y, 2)) : Infinity;
+        const distanceToPlayer2 = !player2.dead ? Math.sqrt(Math.pow(monster.x - player2.x, 2) + Math.pow(monster.y - player2.y, 2)) : Infinity;
+
+        if (distanceToPlayer1 < distanceToPlayer2) {
+            targetPlayer = player1;
+        } else if (distanceToPlayer2 < distanceToPlayer1) {
             targetPlayer = player2;
         }
 
-        if (monster.x < targetPlayer.x) monster.x += monsterSpeed;
-        if (monster.x > targetPlayer.x) monster.x -= monsterSpeed;
-        if (monster.y < targetPlayer.y) monster.y += monsterSpeed;
-        if (monster.y > targetPlayer.y) monster.y -= monsterSpeed;
-        if (isCollision(player1, monster) || isCollision(player2, monster)) {
-            if (isCollision(player1, monster)) player1.health -= damagePerHit;
-            if (isCollision(player2, monster)) player2.health -= damagePerHit;
-            hitSound.play();
-            monsters.splice(index, 1);
-            checkGameOver();
+        if (targetPlayer) {
+            if (monster.x < targetPlayer.x) monster.x += monsterSpeed;
+            if (monster.x > targetPlayer.x) monster.x -= monsterSpeed;
+            if (monster.y < targetPlayer.y) monster.y += monsterSpeed;
+            if (monster.y > targetPlayer.y) monster.y -= monsterSpeed;
+
+            if (isCollision(monster, targetPlayer)) {
+                targetPlayer.health -= damagePerHit;
+                hitSound.play();
+                monsters.splice(index, 1);
+                checkGameOver();
+            }
         }
     });
 
     if (isBossAlive && boss) {
-        const distanceToPlayer1 = Math.sqrt(Math.pow(boss.x - player1.x, 2) + Math.pow(boss.y - player1.y, 2));
-        const distanceToPlayer2 = Math.sqrt(Math.pow(boss.x - player2.x, 2) + Math.pow(boss.y - player2.y, 2));
-    
-        let targetPlayer = player1;
-        if (distanceToPlayer2 < distanceToPlayer1) {
+        let targetPlayer = null;
+        const distanceToPlayer1 = !player1.dead ? Math.sqrt(Math.pow(boss.x - player1.x, 2) + Math.pow(boss.y - player1.y, 2)) : Infinity;
+        const distanceToPlayer2 = !player2.dead ? Math.sqrt(Math.pow(boss.x - player2.x, 2) + Math.pow(boss.y - player2.y, 2)) : Infinity;
+
+        if (distanceToPlayer1 < distanceToPlayer2) {
+            targetPlayer = player1;
+        } else if (distanceToPlayer2 < distanceToPlayer1) {
             targetPlayer = player2;
         }
-    
-        // Déplacement du boss vers le joueur ciblé
-        if (boss.x < targetPlayer.x) boss.x += monsterSpeed;
-        if (boss.x > targetPlayer.x) boss.x -= monsterSpeed;
-        if (boss.y < targetPlayer.y) boss.y += monsterSpeed;
-        if (boss.y > targetPlayer.y) boss.y -= monsterSpeed;
-    
-        // ✅ Ajout d'un cooldown de 5 secondes (5000 ms) entre chaque coup
-        const now = Date.now();
-    
-        if (isCollision(player1, boss) && now - (boss.lastDamageTime || 0) > 5000) {
-            player1.health -= damagePerHit;
-            boss.lastDamageTime = now; // Mise à jour du dernier coup infligé
-            hitSound.play();
+
+        if (targetPlayer) {
+            if (boss.x < targetPlayer.x) boss.x += monsterSpeed;
+            if (boss.x > targetPlayer.x) boss.x -= monsterSpeed;
+            if (boss.y < targetPlayer.y) boss.y += monsterSpeed;
+            if (boss.y > targetPlayer.y) boss.y -= monsterSpeed;
+
+            // ✅ Cooldown du boss
+            const now = Date.now();
+            if (isCollision(boss, targetPlayer) && now - (boss.lastDamageTime || 0) > 5000) {
+                targetPlayer.health -= damagePerHit;
+                boss.lastDamageTime = now;
+                hitSound.play();
+            }
         }
-        if (isCollision(player2, boss) && now - (boss.lastDamageTime || 0) > 5000) {
-            player2.health -= damagePerHit;
-            boss.lastDamageTime = now; // Mise à jour du dernier coup infligé
-            hitSound.play();
-        }
-    }    
+    }
 }
 
 function drawBullets() {
@@ -220,16 +239,41 @@ function isCollision(obj1, obj2) {
 }
 
 function fireBullet(player) {
+    if (player.dead || !player.canShoot) return;
+
+    let dx = 0;
+    let dy = 0;
+
+    // Tir en fonction de la dernière direction
+    if (player.lastDx !== 0 && player.lastDy === 0) {
+        // Mouvement horizontal uniquement
+        dx = Math.sign(player.lastDx) * bulletSpeed;
+    } else if (player.lastDy !== 0 && player.lastDx === 0) {
+        // Mouvement vertical uniquement
+        dy = Math.sign(player.lastDy) * bulletSpeed;
+    } else if (player.lastDx !== 0 && player.lastDy !== 0) {
+        // Mouvement diagonal
+        dx = Math.sign(player.lastDx) * bulletSpeed;
+        dy = Math.sign(player.lastDy) * bulletSpeed;
+    }
+
     const bullet = {
         x: player.x + player.width / 2,
         y: player.y + player.height / 2,
         width: 10,
         height: 10,
-        dx: player.lastDx !== 0 ? Math.sign(player.lastDx) * bulletSpeed : 0,
-        dy: player.lastDy !== 0 ? Math.sign(player.lastDy) * bulletSpeed : 0
+        dx: dx,
+        dy: dy
     };
+
     bullets.push(bullet);
     bulletSound.play();
+
+    // Cooldown pour éviter le spam de tirs
+    player.canShoot = false;
+    setTimeout(() => {
+        player.canShoot = true;
+    }, 100); // Cooldown de 100ms
 }
 
 function fireSalvo(player) {
@@ -326,17 +370,22 @@ function gameLoop() {
 
     updatePlayerPosition(player1);
     updatePlayerPosition(player2);
-
+    updateMonsters();
+    drawMonsters();
     drawPlayer(player1);
     drawPlayer(player2);
     drawBullets();
-    drawMonsters();
     drawScore();
     drawHealth();
-    updateMonsters();
 
-    if (!gameOver) requestAnimationFrame(gameLoop);
+    // Vérifie l'état du jeu à chaque frame
+    checkGameOver();
+
+    if (!gameOver) {
+        requestAnimationFrame(gameLoop);
+    }
 }
+
 
 gameLoop();
 spawnMonsters();
