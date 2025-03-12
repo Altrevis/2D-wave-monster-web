@@ -71,6 +71,20 @@ function checkGameOver() {
     }
 }
 
+function startBossDamageInterval() {
+    setInterval(() => {
+        if (isBossAlive) {
+            if (!player1.dead) {
+                player1.health -= 20;
+            }
+            if (!player2.dead) {
+                player2.health -= 20;
+            }
+            checkGameOver();
+        }
+    }, 5000); // 5000 ms = 5 secondes
+}
+
 function updatePlayerPosition(player) {
     player.x += player.dx;
     player.y += player.dy;
@@ -125,25 +139,32 @@ function updateMonsters() {
     if (isBossAlive && boss) {
         const distanceToPlayer1 = Math.sqrt(Math.pow(boss.x - player1.x, 2) + Math.pow(boss.y - player1.y, 2));
         const distanceToPlayer2 = Math.sqrt(Math.pow(boss.x - player2.x, 2) + Math.pow(boss.y - player2.y, 2));
-
+    
         let targetPlayer = player1;
         if (distanceToPlayer2 < distanceToPlayer1) {
             targetPlayer = player2;
         }
-
+    
+        // Déplacement du boss vers le joueur ciblé
         if (boss.x < targetPlayer.x) boss.x += monsterSpeed;
         if (boss.x > targetPlayer.x) boss.x -= monsterSpeed;
         if (boss.y < targetPlayer.y) boss.y += monsterSpeed;
         if (boss.y > targetPlayer.y) boss.y -= monsterSpeed;
-        if (isCollision(player1, boss)) {
+    
+        // ✅ Ajout d'un cooldown de 5 secondes (5000 ms) entre chaque coup
+        const now = Date.now();
+    
+        if (isCollision(player1, boss) && now - (boss.lastDamageTime || 0) > 5000) {
             player1.health -= damagePerHit;
+            boss.lastDamageTime = now; // Mise à jour du dernier coup infligé
             hitSound.play();
         }
-        if (isCollision(player2, boss)) {
+        if (isCollision(player2, boss) && now - (boss.lastDamageTime || 0) > 5000) {
             player2.health -= damagePerHit;
+            boss.lastDamageTime = now; // Mise à jour du dernier coup infligé
             hitSound.play();
         }
-    }
+    }    
 }
 
 function drawBullets() {
@@ -257,17 +278,17 @@ function spawnMonsters() {
 }
 
 function spawnBoss() {
-    if (!isBossAlive) {
-        boss = {
-            x: canvas.width / 2 - 50,
-            y: canvas.height / 2 - 50,
-            width: 100,
-            height: 100,
-            health: 50
-        };
-        isBossAlive = true;
-    }
+    boss = {
+        x: canvas.width / 2,
+        y: 50,
+        width: 80,
+        height: 80,
+        health: 100
+    };
+    isBossAlive = true;
+    startBossDamageInterval(); // Lancement des dégâts toutes les 5 secondes
 }
+
 
 function keyDownHandler(e) {
     if (gameOver) return;
