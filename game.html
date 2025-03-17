@@ -10,7 +10,15 @@
     </style>
 </head>
 <body>
+    <!-- Menu déroulant pour ajuster le volume -->
+    <div id="soundSettings" class="sound-settings">
+        <label for="volumeControl">Volume:</label>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+    </div>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <!-- Bouton pour mettre en pause -->
+    <button id="pauseButton">Pause</button>
+
     <script src="game.js"></script>
 </body>
 </html>

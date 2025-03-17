@@ -45,6 +45,8 @@ let gameOver = false;
 let killCount = 0;
 let isBossAlive = false;
 let boss = null;
+let isPaused = false; // Nouvelle variable pour gérer la pause
+let gameInterval;
 
 const bulletSound = new Audio("assets/sounds/bullet_sound.mp3");
 const hitSound = new Audio("assets/sounds/hit_sound.mp3");
@@ -60,6 +62,21 @@ monsterImage.src = "assets/images/monster_image.png";
 
 const bossImage = new Image();
 bossImage.src = "assets/images/boss_image.png";
+
+document.getElementById("pauseButton").addEventListener("click", togglePause);
+
+function togglePause() {
+    isPaused = !isPaused;
+
+    // Si le jeu est en pause
+    if (isPaused) {
+        clearInterval(gameInterval); // Arrêter les mises à jour du jeu
+        document.getElementById("pauseButton").textContent = "Reprendre"; // Changer le texte du bouton
+    } else {
+        gameInterval = setInterval(gameLoop, 1000 / 60); // Reprendre les mises à jour du jeu
+        document.getElementById("pauseButton").textContent = "Pause"; // Restaurer le texte du bouton
+    }
+}
 
 function checkGameOver() {
     console.log(`Player1 dead: ${player1.dead}, Player2 dead: ${player2.dead}`);
@@ -366,14 +383,16 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
 function gameLoop() {
+    if (isPaused) return; // Si le jeu est en pause, ne rien faire
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     updatePlayerPosition(player1);
     updatePlayerPosition(player2);
     updateMonsters();
-    drawMonsters();
     drawPlayer(player1);
     drawPlayer(player2);
+    drawMonsters();
     drawBullets();
     drawScore();
     drawHealth();
@@ -385,7 +404,6 @@ function gameLoop() {
         requestAnimationFrame(gameLoop);
     }
 }
-
 
 gameLoop();
 spawnMonsters();

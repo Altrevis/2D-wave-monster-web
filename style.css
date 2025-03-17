@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Press Start 2P', cursive; /* Police rétro */
+    font-family: 'Press Start 2P', cursive;
     background-color: #0a0a0a;
     color: #fff;
     display: flex;
@@ -15,9 +15,14 @@ body {
     height: 100vh;
     overflow: hidden;
     background: radial-gradient(circle, #111, #333);
+    text-align: center;
 }
 
-/* Conteneur principal */
+h1, p, a, button {
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* Container principal */
 .container {
     text-align: center;
     animation: fadeIn 1s ease-in-out;
@@ -40,86 +45,110 @@ main p {
     text-shadow: 0 0 10px #fff, 0 0 20px #ff4500;
 }
 
-/* Bouton Start */
-.start-btn {
+button {
     display: inline-block;
-    padding: 20px 50px;
-    font-size: 1.5rem;
+    padding: 15px 40px;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #fff;
     background-color: #ff4500;
-    border: 2px solid #ff4500;
+    border: 3px solid #ff4500;
     border-radius: 8px;
     text-decoration: none;
+    text-align: center;
+    margin-top: 20px;
+    letter-spacing: 1.5px;
     transition: all 0.3s ease;
+    cursor: pointer;
     box-shadow: 0 0 20px rgba(255, 69, 0, 0.7);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    animation: pulse 1.5s infinite;
 }
 
-.start-btn:hover {
+button:hover {
     background-color: #e03e00;
     border-color: #e03e00;
     box-shadow: 0 0 30px rgba(255, 69, 0, 0.9);
     transform: translateY(-5px);
 }
 
-.start-btn:active {
+button:active {
     transform: translateY(0);
     box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
 }
 
-/* Styles pour le menu déroulant du volume */
+/* Style du lien Retour à l'accueil */
+a {
+    font-size: 1.1rem;
+    margin-top: 20px;
+    color: #32cd32;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #228b22;
+}
+
+/* Boutons */
+button, a {
+    display: inline-block;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #ff4500;
+    border: 3px solid #ff4500;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 20px;
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.7);
+    text-transform: uppercase;
+}
+
+button:hover, a:hover {
+    background-color: #e03e00;
+    border-color: #e03e00;
+    box-shadow: 0 0 30px rgba(255, 69, 0, 0.9);
+    transform: translateY(-5px);
+}
+
+button:active, a:active {
+    transform: translateY(0);
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+}
+
+/* Styles spécifiques pour le bouton "Start Play" */
+a.start-btn {
+    background-color: #32cd32;
+    border-color: #32cd32;
+    box-shadow: 0 0 20px rgba(50, 205, 50, 0.7);
+}
+
+a.start-btn:hover {
+    background-color: #228b22;
+    border-color: #228b22;
+    box-shadow: 0 0 30px rgba(34, 139, 34, 0.9);
+}
+
+/* Styles spécifiques pour le volume */
 .sound-settings {
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: #222;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    color: #fff;
-    display: flex;
-    align-items: center;
+    z-index: 10;
 }
 
 .sound-settings label {
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin-right: 10px;
+    color: #fff;
 }
 
 .sound-settings input[type="range"] {
-    width: 200px;
-    background-color: #555;
-    border-radius: 5px;
-    height: 8px;
-    appearance: none;
-    cursor: pointer;
-}
-
-.sound-settings input[type="range"]::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background-color: #ff4500;
-    border-radius: 50%;
-    cursor: pointer;
-    margin-top: -2.4%;
-}
-
-.sound-settings input[type="range"]::-webkit-slider-runnable-track {
-    background-color: #777;
-    height: 8px;
-    border-radius: 5px;
-}
-
-.sound-settings input[type="range"]:focus {
-    outline: none;
-}
-
-.sound-settings input[type="range"]:hover {
-    background-color: #666;
+    width: 150px;
 }
 
 /* Animations */
@@ -132,36 +161,24 @@ main p {
     }
 }
 
-@keyframes pulse {
+@keyframes fadeIn {
     0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
+        opacity: 0;
     }
     100% {
-        transform: scale(1);
+        opacity: 1;
     }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .game-over-title {
+    header h1 {
         font-size: 2.5rem;
     }
 
-    .game-over-score {
-        font-size: 1.5rem;
-    }
-
-    .restart-btn {
+    .start-btn {
         font-size: 1rem;
         padding: 10px 20px;
-    }
-
-    .start-btn {
-        font-size: 1.2rem;
-        padding: 15px 40px;
     }
 }
 
