@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Game Over</title>
-    <link rel="stylesheet" href="style.css" />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="container">
@@ -19,9 +19,7 @@
     </div>
 
     <script>
-        // Récupérer le score final depuis le localStorage
         document.getElementById("finalScore").innerText = localStorage.getItem("finalScore") || 0;
-
         function restartGame() {
             window.location.href = "game.html";
         }

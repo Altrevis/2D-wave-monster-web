@@ -45,49 +45,6 @@ main p {
     text-shadow: 0 0 10px #fff, 0 0 20px #ff4500;
 }
 
-button {
-    display: inline-block;
-    padding: 15px 40px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #ff4500;
-    border: 3px solid #ff4500;
-    border-radius: 8px;
-    text-decoration: none;
-    text-align: center;
-    margin-top: 20px;
-    letter-spacing: 1.5px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(255, 69, 0, 0.7);
-    text-transform: uppercase;
-}
-
-button:hover {
-    background-color: #e03e00;
-    border-color: #e03e00;
-    box-shadow: 0 0 30px rgba(255, 69, 0, 0.9);
-    transform: translateY(-5px);
-}
-
-button:active {
-    transform: translateY(0);
-    box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
-}
-
-/* Style du lien Retour à l'accueil */
-a {
-    font-size: 1.1rem;
-    margin-top: 20px;
-    color: #32cd32;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #228b22;
-}
-
 /* Boutons */
 button, a {
     display: inline-block;
