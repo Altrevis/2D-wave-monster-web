@@ -94,7 +94,7 @@ function startBossDamageInterval() {
     setInterval(() => {
         if (isBossAlive) {
             if (!player1.dead && player1.health > 0) {
-                player1.health -= 20;
+                player1.health -= 10;
                 if (player1.health <= 0) {
                     player1.dead = true;
                 }
@@ -407,3 +407,37 @@ function gameLoop() {
 
 gameLoop();
 spawnMonsters();
+
+// Fonction pour appeler l'API en GET (récupérer les données)
+async function getData() {
+    try {
+        let response = await fetch('http://127.0.0.1:5000/api/data');
+        if (!response.ok) {
+            throw new Error('Erreur de réseau');
+        }
+        let data = await response.json();
+        console.log(data);  // Affiche les données retournées par l'API
+    } catch (error) {
+        console.error('Erreur avec l\'API :', error);
+    }
+}
+
+// Fonction pour envoyer des données via POST (par exemple pour soumettre des informations ou des résultats)
+async function postData(data) {
+    try {
+        let response = await fetch('http://127.0.0.1:5000/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            throw new Error('Erreur de réseau');
+        }
+        let result = await response.json();
+        console.log(result);  // Affiche le résultat de l'API
+    } catch (error) {
+        console.error('Erreur avec l\'envoi des données :', error);
+    }
+}
