@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .sound-settings1 {
+            position: absolute;
+            top: 2%;
+            left: 20px;
+            z-index: 10;
+            color: #fff;
+        }
+        .sound-settings2 {
+            position: absolute;
+            top: 10%;
+            left: 20px;
+            z-index: 10;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="soundSettings1" class="sound-settings1">
+        <label for="bulletVolumeControl">bulletSound:</label>
+        <input type="range" id="bulletVolumeControl" min="0" max="1" step="0.01" value="1">
+    </div>
+    <div id="soundSettings2" class="sound-settings2">
+        <label for="hitVolumeControl">hitSound:</label>
+        <input type="range" id="hitVolumeControl" min="0" max="1" step="0.01" value="1">
+    </div>
+
+    <main>
+        <a href="index.html" class="start-btn">Start</a>
+    </main>
+
+    <script>
+        const bulletVolumeControl = document.getElementById("bulletVolumeControl");
+        const hitVolumeControl = document.getElementById("hitVolumeControl");
+
+        bulletVolumeControl.addEventListener("input", function() {
+            localStorage.setItem("bulletVolume", this.value);
+        });
+
+        hitVolumeControl.addEventListener("input", function() {
+            localStorage.setItem("hitVolume", this.value);
+        });
+
+        // Initialisation des valeurs depuis localStorage (si elles existent)
+        if (localStorage.getItem("bulletVolume")) {
+            bulletVolumeControl.value = localStorage.getItem("bulletVolume");
+        }
+        if (localStorage.getItem("hitVolume")) {
+            hitVolumeControl.value = localStorage.getItem("hitVolume");
+        }
+    </script>
+</body>
+</html>

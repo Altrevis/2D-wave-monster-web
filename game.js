@@ -1,6 +1,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+
 const player1 = {
     x: canvas.width / 4,
     y: canvas.height - 50,
@@ -75,6 +76,18 @@ function togglePause() {
     } else {
         gameInterval = setInterval(gameLoop, 1000 / 60); // Reprendre les mises à jour du jeu
         document.getElementById("pauseButton").textContent = "Pause"; // Restaurer le texte du bouton
+    }
+}
+
+function updateSoundVolumes() {
+    const bulletVolume = localStorage.getItem("bulletVolume");
+    const hitVolume = localStorage.getItem("hitVolume");
+
+    if (bulletVolume) {
+        bulletSound.volume = parseFloat(bulletVolume);
+    }
+    if (hitVolume) {
+        hitSound.volume = parseFloat(hitVolume);
     }
 }
 
@@ -171,6 +184,7 @@ function updateMonsters() {
                 hitSound.play();
                 monsters.splice(index, 1);
                 checkGameOver();
+                updateSoundVolumes();
             }
         }
     });
@@ -291,6 +305,9 @@ function fireBullet(player) {
     setTimeout(() => {
         player.canShoot = true;
     }, 100); // Cooldown de 100ms
+
+    bulletSound.play();
+    updateSoundVolumes();
 }
 
 function fireSalvo(player) {
@@ -348,6 +365,7 @@ function spawnBoss() {
     };
     isBossAlive = true;
     startBossDamageInterval(); // Lancement des dégâts toutes les 5 secondes
+    updateSoundVolumes();
 }
 
 
@@ -396,6 +414,7 @@ function gameLoop() {
     drawBullets();
     drawScore();
     drawHealth();
+    updateSoundVolumes();
 
     // Vérifie l'état du jeu à chaque frame
     checkGameOver();
