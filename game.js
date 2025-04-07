@@ -1,6 +1,38 @@
+// Récupération du canevas et du contexte 2D
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Connexion au serveur WebSocket
+const socket = io();
+
+// Traitement des données envoyées par l'Arduino
+socket.on('arduino_data', function (data) {
+    console.log("Données reçues de l'Arduino :", data);
+    // Analyse des données (exemple : "Joystick 1: X=512, Y=256, L3=1 | Joystick 2: X=300, Y=400, R3=0")
+    const parsedData = parseArduinoData(data.data);
+    // Application des données aux joueurs
+    applyArduinoControls(parsedData);
+});
+
+// Fonction pour analyser les données de l'Arduino
+function parseArduinoData(data) {
+    const result = {};
+    const parts = data.split('|');
+    parts.forEach(part => {
+        const [key, values] = part.split(':');
+        if (key.includes('Joystick')) {
+            const joystick = key.trim().replace(':', '');
+            result[joystick] = {};
+            values.split(',').forEach(pair => {
+                const [k, v] = pair.split('=');
+                result[joystick][k.trim()] = parseInt(v.trim());
+            });
+        } else if (key.includes('Buttons')) {
+            result['Buttons'] = values.split(',').map(button => parseInt(button.trim()));
+        }
+    });
+    return result;
+}
 
 const player1 = {
     x: canvas.width / 4,
@@ -205,8 +237,7 @@ function updateMonsters() {
             if (boss.x > targetPlayer.x) boss.x -= monsterSpeed;
             if (boss.y < targetPlayer.y) boss.y += monsterSpeed;
             if (boss.y > targetPlayer.y) boss.y -= monsterSpeed;
-
-            // ✅ Cooldown du boss
+            // Cooldown du boss
             const now = Date.now();
             if (isCollision(boss, targetPlayer) && now - (boss.lastDamageTime || 0) > 5000) {
                 targetPlayer.health -= damagePerHit;
@@ -368,33 +399,34 @@ function spawnBoss() {
     updateSoundVolumes();
 }
 
-
-function keyDownHandler(e) {
-    if (gameOver) return;
-
-    if (e.key === "d") player1.dx = player1.speed;
-    if (e.key === "q") player1.dx = -player1.speed;
-    if (e.key === "z") player1.dy = -player1.speed;
-    if (e.key === "s") player1.dy = player1.speed;
-
-    if (e.key === "ArrowRight") player2.dx = player2.speed;
-    if (e.key === "ArrowLeft") player2.dx = -player2.speed;
-    if (e.key === "ArrowUp") player2.dy = -player2.speed;
-    if (e.key === "ArrowDown") player2.dy = player2.speed;
-
-    if (e.key === "r") fireBullet(player2);
-    if (e.key === "t") fireBullet(player1);
-
-    if (e.key === "f") fireSalvo(player2);
-    if (e.key === "g") fireSalvo(player1);
+// Fonction pour appliquer les données à la commande des joueurs
+function applyArduinoControls(data) {
+    const { 'Joystick 1': joystick1, 'Joystick 2': joystick2, Buttons: buttons } = data;
+    console.log("Joystick 1 :", joystick1);
+    console.log("Joystick 2 :", joystick2);
+    console.log("Boutons :", buttons);
+    // Commande du joueur 1
+    player1.dx = mapJoystickToSpeed(joystick1.X);
+    player1.dy = mapJoystickToSpeed(joystick1.Y);
+    if (joystick1.L3 === 0) fireBullet(player1);
+    // Commande du joueur 2
+    player2.dx = mapJoystickToSpeed(joystick2.X);
+    player2.dy = mapJoystickToSpeed(joystick2.Y);
+    if (joystick2.R3 === 0) fireBullet(player2);
+    // Commande des boutons
+    if (buttons[0] === 0) fireSalvo(player1);
+    if (buttons[1] === 0) fireSalvo(player2);
 }
 
-function keyUpHandler(e) {
-    if (["d", "q"].includes(e.key)) player1.dx = 0;
-    if (["z", "s"].includes(e.key)) player1.dy = 0;
-
-    if (["ArrowRight", "ArrowLeft"].includes(e.key)) player2.dx = 0;
-    if (["ArrowUp", "ArrowDown"].includes(e.key)) player2.dy = 0;
+// Fonction pour transformer les valeurs du joystick en vitesse
+function mapJoystickToSpeed(value) {
+    const center = 512; // Valeur centrale du joystick
+    const deadZone = 50; // Zone sans réactivité
+    const maxSpeed = 5; // Vitesse maximale
+    if (Math.abs(value - center) < deadZone) {
+        return 0;
+    }
+    return ((value - center) / (1023 - center)) * maxSpeed;
 }
 
 document.addEventListener("keydown", keyDownHandler, false);
