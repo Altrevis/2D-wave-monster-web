@@ -1,20 +1,14 @@
-// Récupération du canevas et du contexte 2D
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Connexion au serveur WebSocket
 const socket = io();
 
-// Traitement des données envoyées par l'Arduino
 socket.on('arduino_data', function (data) {
     console.log("Données reçues de l'Arduino :", data);
-    // Analyse des données (exemple : "Joystick 1: X=512, Y=256, L3=1 | Joystick 2: X=300, Y=400, R3=0")
     const parsedData = parseArduinoData(data.data);
-    // Application des données aux joueurs
     applyArduinoControls(parsedData);
 });
 
-// Fonction pour analyser les données de l'Arduino
 function parseArduinoData(data) {
     const result = {};
     const parts = data.split('|');
@@ -78,7 +72,7 @@ let gameOver = false;
 let killCount = 0;
 let isBossAlive = false;
 let boss = null;
-let isPaused = false; // Nouvelle variable pour gérer la pause
+let isPaused = false; 
 let gameInterval;
 
 const bulletSound = new Audio("assets/sounds/bullet_sound.mp3");
@@ -101,13 +95,12 @@ document.getElementById("pauseButton").addEventListener("click", togglePause);
 function togglePause() {
     isPaused = !isPaused;
 
-    // Si le jeu est en pause
     if (isPaused) {
-        clearInterval(gameInterval); // Arrêter les mises à jour du jeu
-        document.getElementById("pauseButton").textContent = "Reprendre"; // Changer le texte du bouton
+        clearInterval(gameInterval); 
+        document.getElementById("pauseButton").textContent = "Reprendre"; 
     } else {
-        gameInterval = setInterval(gameLoop, 1000 / 60); // Reprendre les mises à jour du jeu
-        document.getElementById("pauseButton").textContent = "Pause"; // Restaurer le texte du bouton
+        gameInterval = setInterval(gameLoop, 1000 / 60); 
+        document.getElementById("pauseButton").textContent = "Pause";
     }
 }
 
@@ -237,7 +230,6 @@ function updateMonsters() {
             if (boss.x > targetPlayer.x) boss.x -= monsterSpeed;
             if (boss.y < targetPlayer.y) boss.y += monsterSpeed;
             if (boss.y > targetPlayer.y) boss.y -= monsterSpeed;
-            // Cooldown du boss
             const now = Date.now();
             if (isCollision(boss, targetPlayer) && now - (boss.lastDamageTime || 0) > 5000) {
                 targetPlayer.health -= damagePerHit;
@@ -306,15 +298,11 @@ function fireBullet(player) {
     let dx = 0;
     let dy = 0;
 
-    // Tir en fonction de la dernière direction
     if (player.lastDx !== 0 && player.lastDy === 0) {
-        // Mouvement horizontal uniquement
         dx = Math.sign(player.lastDx) * bulletSpeed;
     } else if (player.lastDy !== 0 && player.lastDx === 0) {
-        // Mouvement vertical uniquement
         dy = Math.sign(player.lastDy) * bulletSpeed;
     } else if (player.lastDx !== 0 && player.lastDy !== 0) {
-        // Mouvement diagonal
         dx = Math.sign(player.lastDx) * bulletSpeed;
         dy = Math.sign(player.lastDy) * bulletSpeed;
     }
@@ -331,11 +319,10 @@ function fireBullet(player) {
     bullets.push(bullet);
     bulletSound.play();
 
-    // Cooldown pour éviter le spam de tirs
     player.canShoot = false;
     setTimeout(() => {
         player.canShoot = true;
-    }, 100); // Cooldown de 100ms
+    }, 100);
 
     bulletSound.play();
     updateSoundVolumes();
@@ -395,34 +382,29 @@ function spawnBoss() {
         health: 100
     };
     isBossAlive = true;
-    startBossDamageInterval(); // Lancement des dégâts toutes les 5 secondes
+    startBossDamageInterval(); 
     updateSoundVolumes();
 }
 
-// Fonction pour appliquer les données à la commande des joueurs
 function applyArduinoControls(data) {
     const { 'Joystick 1': joystick1, 'Joystick 2': joystick2, Buttons: buttons } = data;
     console.log("Joystick 1 :", joystick1);
     console.log("Joystick 2 :", joystick2);
     console.log("Boutons :", buttons);
-    // Commande du joueur 1
     player1.dx = mapJoystickToSpeed(joystick1.X);
     player1.dy = mapJoystickToSpeed(joystick1.Y);
     if (joystick1.L3 === 0) fireBullet(player1);
-    // Commande du joueur 2
     player2.dx = mapJoystickToSpeed(joystick2.X);
     player2.dy = mapJoystickToSpeed(joystick2.Y);
     if (joystick2.R3 === 0) fireBullet(player2);
-    // Commande des boutons
     if (buttons[0] === 0) fireSalvo(player1);
     if (buttons[1] === 0) fireSalvo(player2);
 }
 
-// Fonction pour transformer les valeurs du joystick en vitesse
 function mapJoystickToSpeed(value) {
-    const center = 512; // Valeur centrale du joystick
-    const deadZone = 50; // Zone sans réactivité
-    const maxSpeed = 5; // Vitesse maximale
+    const center = 512; 
+    const deadZone = 50; 
+    const maxSpeed = 5; 
     if (Math.abs(value - center) < deadZone) {
         return 0;
     }
@@ -433,7 +415,7 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
 function gameLoop() {
-    if (isPaused) return; // Si le jeu est en pause, ne rien faire
+    if (isPaused) return; 
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -448,7 +430,6 @@ function gameLoop() {
     drawHealth();
     updateSoundVolumes();
 
-    // Vérifie l'état du jeu à chaque frame
     checkGameOver();
 
     if (!gameOver) {
@@ -459,7 +440,6 @@ function gameLoop() {
 gameLoop();
 spawnMonsters();
 
-// Fonction pour appeler l'API en GET (récupérer les données)
 async function getData() {
     try {
         let response = await fetch('http://127.0.0.1:5000/api/data');
@@ -467,13 +447,12 @@ async function getData() {
             throw new Error('Erreur de réseau');
         }
         let data = await response.json();
-        console.log(data);  // Affiche les données retournées par l'API
+        console.log(data);
     } catch (error) {
         console.error('Erreur avec l\'API :', error);
     }
 }
 
-// Fonction pour envoyer des données via POST (par exemple pour soumettre des informations ou des résultats)
 async function postData(data) {
     try {
         let response = await fetch('http://127.0.0.1:5000/api/data', {
@@ -487,7 +466,7 @@ async function postData(data) {
             throw new Error('Erreur de réseau');
         }
         let result = await response.json();
-        console.log(result);  // Affiche le résultat de l'API
+        console.log(result); 
     } catch (error) {
         console.error('Erreur avec l\'envoi des données :', error);
     }
